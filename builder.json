@@ -1,0 +1,16 @@
+{
+  "project": "soccer-app-ios",
+  "platform": "ios",
+  "github": {
+    "owner": "efmarcial-dev",
+    "repo": "soccer-app-ios"
+  },
+  "ios": {},
+  "flutter": {
+    "watch": {}
+  },
+  "reactNative": {
+    "expo": true
+  },
+  "mobai": {}
+}
