@@ -1,6 +1,7 @@
 import * as Device from 'expo-device';
 import { Platform, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSession } from '@/ctx';
 
 import { AnimatedIcon } from '@/components/animated-icon';
 import { HintRow } from '@/components/hint-row';
@@ -29,6 +30,9 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+
+  const {signOut} = useSession();
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
@@ -41,6 +45,15 @@ export default function HomeScreen() {
 
         <ThemedText type="code" style={styles.code}>
           get started
+        </ThemedText>
+
+        <ThemedText
+          type='code' style={styles.code} 
+          onPress={()=>{
+            signOut();
+          }}
+        >
+          Sign-Out
         </ThemedText>
 
         <ThemedView type="backgroundElement" style={styles.stepContainer}>
