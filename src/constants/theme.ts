@@ -13,7 +13,11 @@ export const Colors = {
     background: '#ffffff',
     backgroundElement: '#F0F0F3',
     backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
+    textSecondary: '#696c74',
+    textLink: "#0274DF",
+    buttonBackground: '#3C9FFE', // Your existing light mode color
+    buttonText: '#F0F0F3',       // Contrast color for light mode
+    borderColorPrimary: "#c6c8cc"
   },
   dark: {
     text: '#ffffff',
@@ -21,6 +25,10 @@ export const Colors = {
     backgroundElement: '#212225',
     backgroundSelected: '#2E3135',
     textSecondary: '#B0B4BA',
+    textLink: '#A5C02A',
+    buttonBackground: '#A5C02A', // A slightly darker/muted version for dark mode
+    buttonText: '#000000',
+    borderColorPrimary: "#B0B4BA"
   },
 } as const;
 

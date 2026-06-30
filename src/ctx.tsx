@@ -1,8 +1,8 @@
 
 import {useEffect, createContext, type PropsWithChildren, useState, useContext} from 'react'
 
-import { useStorageState } from './useStorageState';
-import { onAuthStateChanged, signOut, signInWithEmailAndPassword, User } from 'firebase/auth';
+
+import { onAuthStateChanged, signOut as FirebaseSignOut, signInWithEmailAndPassword, User } from 'firebase/auth';
 import {auth} from './config/firebaseConfig';
 
 const AuthContext = createContext<{
@@ -53,7 +53,7 @@ export function SessionProvider({children}: PropsWithChildren){
 
                 signOut: () => {
                     // Perform sign-out logic here
-                    signOut(auth);
+                    FirebaseSignOut(auth);
                 },
                 session: user,
                 isLoading,
