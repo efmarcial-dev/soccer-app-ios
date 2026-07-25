@@ -2,7 +2,7 @@
 import {useEffect, createContext, type PropsWithChildren, useState, useContext} from 'react'
 
 
-import { onAuthStateChanged, signOut as FirebaseSignOut, signInWithEmailAndPassword, User } from 'firebase/auth';
+import { onAuthStateChanged, signOut as FirebaseSignOut, signInWithEmailAndPassword, User , createUserWithEmailAndPassword} from 'firebase/auth';
 import {auth} from './config/firebaseConfig';
 
 const AuthContext = createContext<{
