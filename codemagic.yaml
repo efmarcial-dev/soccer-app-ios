@@ -20,13 +20,15 @@ workflows:
           echo '<?xml version="1.0" encoding="UTF-8"?>' > ExportOptions.plist
           echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> ExportOptions.plist
           echo '<plist version="1.0"><dict>' >> ExportOptions.plist
-          echo '    <key>method</key><string>development</string>' >> ExportOptions.plist
+          echo '    <key>method</key><string>debugging</string>' >> ExportOptions.plist
           echo '    <key>compileBitcode</key><false/>' >> ExportOptions.plist
+          echo '    <key>signingStyle</key><string>manual</string>' >> ExportOptions.plist
+          echo '    <key>stripSwiftSymbols</key><true/>' >> ExportOptions.plist
           echo '</dict></plist>' >> ExportOptions.plist
       - name: Build iOS app (IPA)
         script: |
           cd ios
           xcodebuild -workspace soccerappios.xcworkspace -scheme soccerappios -sdk iphoneos -configuration Release archive -archivePath build/App.xcarchive CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
-          xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/ios/ipa
+          xcodebuild -exportArchive -archivePath build/App.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/ios/ipa -allowProvisioningUpdates
     artifacts:
       - ios/build/ios/ipa/*.ipa
