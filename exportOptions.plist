@@ -4,13 +4,14 @@
 <dict>
     <key>method</key>
     <string>development</string>
-    <key>compileBitcode</key>
-    <false/>
+    <key>teamID</key>
+    <string>ZWC5N37RNX</string>
     <key>signingStyle</key>
     <string>manual</string>
-    <key>stripSwiftSymbols</key>
-    <true/>
-    <key>teamID</key>
-    <string>798RNLXS99</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.eduardonova.soccerappios</key>
+        <string>iOS Team Provisioning Profile: com.eduardonova.soccerappios</string>
+    </dict>
 </dict>
 </plist>
