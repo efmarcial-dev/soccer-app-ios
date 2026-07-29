@@ -5,12 +5,13 @@ workflows:
     instance_type: mac_mini_m2
     environment:
       groups:
-        - Xcode Profile  # Replace with the exact Environment Variable Group name you created in Codemagic
+        - Xcode Profile  
       vars:
-        BUNDLE_ID: "com.eduardonova.soccerappios"  # Put your exact iOS app Bundle ID here
-        XCODE_PROJECT: "soccerappios.xcodeproj"  # Or XCODE_PROJECT: "YourProject.xcodeproj"
+        BUNDLE_ID: "com.eduardonova.soccerappios"
+        XCODE_PROJECT: "ios/soccerappios.xcodeproj"  # Pointing inside the ios folder
         XCODE_SCHEME: "soccerappios"
-      xcode: latest  # This uses a modern cloud Xcode version that supports the new code
+        TEAM_ID: "798RNLXS99" 
+      xcode: latest
     scripts:
       - name: Initialize keychain
         script: |
@@ -28,19 +29,20 @@ workflows:
           keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
       - name: Set up code signing settings on Xcode project
         script: |
-          xcode-project use-profiles
+          # Navigate into the ios directory to run profile configuration correctly
+          cd ios && xcode-project use-profiles
       - name: Build iOS application
         script: |
-          # If it's a standard workspace/project build:
-          xcodebuild -workspace "$XCODE_WORKSPACE" \
+          # Build the archive pointing to the project file inside the ios folder
+          xcodebuild -project "$XCODE_PROJECT" \
                      -scheme "$XCODE_SCHEME" \
                      -sdk iphoneos \
                      -configuration Release \
                      archive -archivePath build/App.xcarchive \
                      CODE_SIGN_STYLE=Manual \
-                     DEVELOPMENT_TEAM="YourTeamID"  # Optional if profiles map automatically
+                     DEVELOPMENT_TEAM="$TEAM_ID"
           
-          # Export the archive to an IPA file
+          # Export the archive to an IPA file (referencing exportOptions.plist in the root)
           xcodebuild -exportArchive \
                      -archivePath build/App.xcarchive \
                      -exportOptionsPlist exportOptions.plist \
