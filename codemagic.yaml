@@ -10,7 +10,8 @@ workflows:
         BUNDLE_ID: "com.eduardonova.soccerappios"
         XCODE_PROJECT: "ios/soccerappios.xcodeproj"
         XCODE_SCHEME: "soccerappios"
-        TEAM_ID: "798RNLXS99" 
+        TEAM_ID: "798RNLXS99"
+        PROVISIONING_PROFILE_SPECIFIER: "iOS Team Provisioning Profile: com.eduardonova.soccerappios" # Default name Xcode usually gives free profiles 
       xcode: latest
     scripts:
       - name: Install dependencies
@@ -38,13 +39,17 @@ workflows:
           cd ios && xcode-project use-profiles
       - name: Build iOS application
         script: |
+          # Find the UUID of the installed provisioning profile dynamically during the build
+          PROFILE_UUID=$(basename $(ls ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision) .mobileprovision)
+          
           xcodebuild -project "$XCODE_PROJECT" \
                      -scheme "$XCODE_SCHEME" \
                      -sdk iphoneos \
                      -configuration Release \
                      archive -archivePath build/App.xcarchive \
                      CODE_SIGN_STYLE=Manual \
-                     DEVELOPMENT_TEAM="$TEAM_ID"
+                     DEVELOPMENT_TEAM="$TEAM_ID" \
+                     PROVISIONING_PROFILE="$PROFILE_UUID"
           
           xcodebuild -exportArchive \
                      -archivePath build/App.xcarchive \
