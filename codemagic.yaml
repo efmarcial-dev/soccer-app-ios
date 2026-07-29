@@ -8,8 +8,8 @@ workflows:
         - Xcode Profile  # Replace with the exact Environment Variable Group name you created in Codemagic
       vars:
         BUNDLE_ID: "com.eduardonova.soccerappios"  # Put your exact iOS app Bundle ID here
-        XCODE_WORKSPACE: "project.xcworkspace"  # Or XCODE_PROJECT: "YourProject.xcodeproj"
-        XCODE_SCHEME: "YourScheme"
+        XCODE_PROJECT: "soccerappios.xcodeproj"  # Or XCODE_PROJECT: "YourProject.xcodeproj"
+        XCODE_SCHEME: "soccerappios"
       xcode: latest  # This uses a modern cloud Xcode version that supports the new code
     scripts:
       - name: Initialize keychain
