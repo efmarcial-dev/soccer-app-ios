@@ -39,9 +39,7 @@ workflows:
           cd ios && xcode-project use-profiles
       - name: Build iOS application
         script: |
-          # Find the UUID of the installed provisioning profile dynamically during the build
-          PROFILE_UUID=$(basename $(ls ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision) .mobileprovision)
-          
+          # Explicitly target manual signing parameters required for free personal teams
           xcodebuild -project "$XCODE_PROJECT" \
                      -scheme "$XCODE_SCHEME" \
                      -sdk iphoneos \
@@ -49,7 +47,8 @@ workflows:
                      archive -archivePath build/App.xcarchive \
                      CODE_SIGN_STYLE=Manual \
                      DEVELOPMENT_TEAM="$TEAM_ID" \
-                     PROVISIONING_PROFILE="$PROFILE_UUID"
+                     CODE_SIGN_IDENTITY="Apple Development" \
+                     PROVISIONING_PROFILE_SPECIFIER="iOS Team Provisioning Profile: $BUNDLE_ID"
           
           xcodebuild -exportArchive \
                      -archivePath build/App.xcarchive \
