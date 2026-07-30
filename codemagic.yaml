@@ -4,49 +4,57 @@ workflows:
     max_build_duration: 60
     instance_type: mac_mini_m2
     environment:
+      groups:
+        - Xcode Profile
       vars:
         BUNDLE_ID: "com.eduardonova.soccerappios"
         XCODE_WORKSPACE: "ios/soccerappios.xcworkspace"
         XCODE_SCHEME: "soccerappios"
         TEAM_ID: "ZWC5N37RNX"
         PROVISIONING_PROFILE_SPECIFIER: "iOS Team Provisioning Profile: com.eduardonova.soccerappios"
+      xcode: latest
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+      - name: Expo prebuild (Generate iOS native folder)
+        script: |
+          npx expo prebuild --platform ios
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+      - name: Initialize keychain
+        script: |
+          keychain initialize
+      - name: Set up provisioning profile
+        script: |
+          PROFILES_HOME="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PROFILES_HOME"
+          PROFILE_PATH="$PROFILES_HOME/$(uuidgen).mobileprovision"
+          echo $CM_PROVISIONING_PROFILE | base64 --decode > "$PROFILE_PATH"
+          echo "Provisioning profile saved to $PROFILE_PATH"
+      - name: Add signing certificate to keychain
+        script: |
+          echo $CM_CERTIFICATE | base64 --decode > /tmp/certificate.p12
+          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
+      - name: Set up code signing settings on Xcode project
+        script: |
+          cd ios && xcode-project use-profiles
+      - name: Build iOS application
+        script: |
+          xcodebuild -workspace "$XCODE_WORKSPACE" \
+                     -scheme "$XCODE_SCHEME" \
+                     -sdk iphoneos \
+                     -configuration Release \
+                     archive -archivePath build/App.xcarchive \
+                     CODE_SIGN_STYLE=Manual \
+                     DEVELOPMENT_TEAM="$TEAM_ID" \
+                     CODE_SIGN_IDENTITY="Apple Development" \
+                     PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_SPECIFIER"
 
-scripts:
-  - name: Install dependencies
-    script: |
-      npm install
-  - name: Expo prebuild (Generate iOS native folder)
-    script: |
-      npx expo prebuild --platform ios
-  - name: Install CocoaPods dependencies
-    script: |
-      cd ios && pod install
-  - name: Initialize keychain
-    script: |
-      keychain initialize
-  - name: Set up provisioning profile
-    script: |
-      PROFILES_HOME="$HOME/Library/MobileDevice/Provisioning Profiles"
-      mkdir -p "$PROFILES_HOME"
-      PROFILE_PATH="$PROFILES_HOME/$(uuidgen).mobileprovision"
-      echo $CM_PROVISIONING_PROFILE | base64 --decode > "$PROFILE_PATH"
-      echo "Provisioning profile saved to $PROFILE_PATH"
-  - name: Add signing certificate to keychain
-    script: |
-      echo $CM_CERTIFICATE | base64 --decode > /tmp/certificate.p12
-      keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
-  - name: Set up code signing settings on Xcode project
-    script: |
-      cd ios && xcode-project use-profiles
-  - name: Build iOS application
-    script: |
-      xcodebuild -workspace "$XCODE_WORKSPACE" \
-                 -scheme "$XCODE_SCHEME" \
-                 -sdk iphoneos \
-                 -configuration Release \
-                 archive -archivePath build/App.xcarchive
-
-      xcodebuild -exportArchive \
-                 -archivePath build/App.xcarchive \
-                 -exportOptionsPlist exportOptions.plist \
-                 -exportPath build/output
+          xcodebuild -exportArchive \
+                     -archivePath build/App.xcarchive \
+                     -exportOptionsPlist exportOptions.plist \
+                     -exportPath build/output
+    artifacts:
+      - build/output/*.ipa
